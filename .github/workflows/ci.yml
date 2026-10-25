@@ -1,37 +1,75 @@
+
 name: CitasSQA - Quality Gate CI
+
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
+    branches: [main]
   workflow_dispatch:
+
 permissions:
   contents: read
+
 jobs:
-  quality:
+  quality-gate:
     name: Lint, Unit Tests, Coverage, Integration
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    runs-on: ubuntu-24.04
+
     steps:
-      - name: Checkout
+      - name: Descargar codigo
         uses: actions/checkout@v4
-      - name: Node.js 22
+
+      - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install dependencies
-        run: npm install --no-audit --no-fund
-      - name: ESLint - static analysis
-        run: npm run lint
-      - name: Unit tests with coverage
-        run: npm run test:coverage
-      - name: API integration tests
-        run: npm run test:integration
-      - name: Upload test evidence
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Crear directorio de evidencias
+        run: mkdir -p evidence
+
+      - name: Analisis estatico ESLint
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run lint 2>&1 | tee evidence/eslint.log
+
+      - name: Pruebas unitarias y cobertura
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run test:coverage 2>&1 | tee evidence/unit-tests-coverage.log
+
+      - name: Pruebas de integracion
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run test:integration 2>&1 | tee evidence/integration-tests.log
+
+      - name: Resumen de calidad
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## CitasSQA - Quality Gate"
+            echo ""
+            echo "- Commit: $GITHUB_SHA"
+            echo "- Rama: $GITHUB_REF_NAME"
+            echo "- Resultado: ${{ job.status }}"
+            echo "- Analisis estatico: ESLint"
+            echo "- Pruebas: unitarias e integracion"
+            echo "- Cobertura: consultar unit-tests-coverage.log"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Subir evidencias
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: citas-sqa-evidence
-          path: |
-            coverage/
-            evidence/
-          if-no-files-found: warn
+          name: citas-sqa-quality-evidence
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
