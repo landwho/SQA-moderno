@@ -1,0 +1,3 @@
+const base=process.env.CITAS_URL||'http://localhost:3100';const started=Date.now();
+for(const [label,url,method] of [['salud_previa','/api/health','GET'],['fallo_controlado','/api/dev/simulate-failure','POST'],['salud_posterior','/api/health','GET']]){try{const r=await fetch(base+url,{method});console.log(JSON.stringify({timestamp:new Date().toISOString(),label,httpStatus:r.status,requestId:r.headers.get('x-request-id'),elapsedMs:Date.now()-started,response:await r.json()}));}catch(e){console.log(JSON.stringify({label,error:String(e)}));}}
+console.log('El endpoint de inyección requiere ENABLE_FAULT_INJECTION=true al iniciar el servidor.');

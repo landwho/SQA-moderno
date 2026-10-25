@@ -1,0 +1,25 @@
+name: CitasSQA - Continuous Delivery
+on:
+  workflow_run:
+    workflows: ["CitasSQA - Quality Gate CI"]
+    types: [completed]
+permissions:
+  contents: read
+jobs:
+  package:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tested revision
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Create release package
+        run: |
+          mkdir -p dist
+          tar -czf dist/citas-sqa-${{ github.event.workflow_run.head_sha }}.tar.gz src public package.json README.md
+      - name: Upload delivery artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: citas-sqa-delivery
+          path: dist/*.tar.gz

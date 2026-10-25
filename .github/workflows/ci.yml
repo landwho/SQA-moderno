@@ -1,0 +1,37 @@
+name: CitasSQA - Quality Gate CI
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  quality:
+    name: Lint, Unit Tests, Coverage, Integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: ESLint - static analysis
+        run: npm run lint
+      - name: Unit tests with coverage
+        run: npm run test:coverage
+      - name: API integration tests
+        run: npm run test:integration
+      - name: Upload test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: citas-sqa-evidence
+          path: |
+            coverage/
+            evidence/
+          if-no-files-found: warn

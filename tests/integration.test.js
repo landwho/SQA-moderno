@@ -1,0 +1,10 @@
+'use strict';
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const {server}=require('../src/server');
+let base;
+test.before(async()=>{await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));base=`http://127.0.0.1:${server.address().port}`;});
+test.after(async()=>{await new Promise(resolve=>server.close(resolve));});
+test('IT-01: health responde HTTP 200',async()=>{const r=await fetch(base+'/api/health');assert.equal(r.status,200);assert.equal((await r.json()).status,'ok');assert.ok(r.headers.get('x-request-id'));});
+test('IT-02: JSON inválido retorna HTTP 400',async()=>{const r=await fetch(base+'/api/appointments',{method:'POST',headers:{'content-type':'application/json'},body:'{invalido'});assert.equal(r.status,400);});
+test('IT-03: ruta inexistente retorna HTTP 404',async()=>{const r=await fetch(base+'/api/no-existe');assert.equal(r.status,404);});

@@ -1,0 +1,21 @@
+{
+  "name": "citas-sqa",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Proyecto B SQA moderno: Shift-Left y Shift-Right",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test tests/*.test.js",
+    "lint": "eslint src tests public/app.js",
+    "check": "npm run lint && npm run test:coverage && npm run test:integration",
+    "test:coverage": "node --test --experimental-test-coverage tests/domain.test.js",
+    "test:integration": "node --test tests/integration.test.js"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "@eslint/js": "^9.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
