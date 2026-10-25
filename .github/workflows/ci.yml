@@ -78,12 +78,12 @@ jobs:
         run: |
           mkdir -p evidence
           npm audit --audit-level=high --json > evidence/security-audit.json
-      - name: Simulacion controlada de incidente de seguridad
-        if: ${{ vars.SQA_SIMULATE_SECURITY_FAILURE == 'true' }}
-        shell: bash
-        run: |
-          mkdir -p evidence
-          echo "SEC-001: Fallo de seguridad simulado" \
-            | tee evidence/security-failure.log
-          echo "Quality Gate rechazado por politica de seguridad"
-          exit 1
+      # - name: Simulacion controlada de incidente de seguridad
+      #   if: ${{ vars.SQA_SIMULATE_SECURITY_FAILURE == 'true' }}
+      #   shell: bash
+      #   run: |
+      #     mkdir -p evidence
+      #     echo "SEC-001: Fallo de seguridad simulado" \
+      #       | tee evidence/security-failure.log
+      #     echo "Quality Gate rechazado por politica de seguridad"
+      #     exit 1
