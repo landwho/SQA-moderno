@@ -12,8 +12,9 @@
     "test:integration": "node --test tests/integration.test.js"
   },
   "devDependencies": {
+    "@eslint/js": "^9.0.0",
     "eslint": "^9.0.0",
-    "@eslint/js": "^9.0.0"
+    "lodash": "4.17.19"
   },
   "engines": {
     "node": ">=20"
