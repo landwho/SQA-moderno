@@ -1,5 +1,4 @@
 'use strict';
-
 function validateAppointment(input) {
   if (!input || typeof input !== 'object') return { ok:false, error:'Solicitud inválida' };
   const client = typeof input.client === 'string' ? input.client.trim() : '';
