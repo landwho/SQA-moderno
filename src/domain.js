@@ -12,4 +12,4 @@ function validateAppointment(input) {
 function conflicts(items, appointment, excludeId=null) { return items.some(x=>x.id!==excludeId && x.date===appointment.date && x.time===appointment.time && x.service.toLowerCase()===appointment.service.toLowerCase()); }
 function metrics(events) { const incidents=events.filter(e=>e.type==='incident'&&Number.isFinite(e.repairMinutes)); return { incidents:incidents.length, mttrMinutes:incidents.length ? Number((incidents.reduce((s,e)=>s+e.repairMinutes,0)/incidents.length).toFixed(2)) : null }; }
 module.exports={validateAppointment,conflicts,metrics};
-console.log(variableQueNoExiste);
+// console.log(variableQueNoExiste);

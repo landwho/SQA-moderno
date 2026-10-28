@@ -87,3 +87,8 @@ jobs:
       #       | tee evidence/security-failure.log
       #     echo "Quality Gate rechazado por politica de seguridad"
       #     exit 1
+      - name: Auditoria de seguridad de dependencias
+        shell: bash
+        run: |
+          mkdir -p evidence
+          npm audit --audit-level=high --json > evidence/security-audit.json
